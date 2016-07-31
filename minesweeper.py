@@ -2,70 +2,70 @@ import random
 import turtle
 
 char_0 = '''\
- *** 
+ ***
 *  **
 * * *
 **  *
 *   *
  *** '''
 char_1 = '''\
-  *  
- **  
-  *  
-  *  
-  *  
+  *
+ **
+  *
+  *
+  *
  *** '''
 char_2 = '''\
- *** 
+ ***
 *   *
-   * 
-  *  
- *   
+   *
+  *
+ *
 *****'''
 char_3 = '''\
 *****
     *
-  ** 
+  **
     *
 *   *
  *** '''
 char_4 = '''\
-   * 
-  ** 
- * * 
-*  * 
+   *
+  **
+ * *
+*  *
 *****
    * '''
 char_5 = '''\
 *****
-*    
-**** 
+*
+****
     *
 *   *
  *** '''
 char_6 = '''\
- *** 
-*    
-**** 
+ ***
+*
+****
 *   *
 *   *
  *** '''
 char_7 = '''\
 *****
     *
-   * 
-  *  
-  *  
+   *
+  *
+  *
   *  '''
 char_8 = '''\
- *** 
+ ***
 *   *
- *** 
+ ***
 *   *
 *   *
  *** '''
 char_9 = '''\
- *** 
+ ***
 *   *
 *   *
  ****
@@ -73,7 +73,73 @@ char_9 = '''\
  *** '''
 char_numbers = [char_0, char_1, char_2, char_3, char_4,
                 char_5, char_6, char_7, char_8, char_9]
+char_G = '''\
+ ***
+*
+*
+*  **
+*   *
+ ****'''
+char_a = '''\
 
+ ***
+    *
+ ****
+*   *
+ ****'''
+char_m = '''\
+
+ * *
+* * *
+* * *
+* * *
+* * *'''
+char_e = '''\
+
+ ***
+*   *
+*****
+*
+ *** '''
+
+char_o = '''\
+
+ ***
+*   *
+*   *
+*   *
+ *** '''
+char_v = '''\
+
+*   *
+*   *
+*   *
+ * *
+  *  '''
+char_r = '''\
+
+* ***
+**
+*
+*
+*    '''
+char__ = '''\
+
+
+
+
+
+     '''
+char_alphabet = {
+    'G': char_G,
+    'a': char_a,
+    'm': char_m,
+    'e': char_e,
+    'o': char_o,
+    'v': char_v,
+    'r': char_r,
+    ' ': char__,
+}
 
 class MyTurtle(turtle.Turtle):
     def setpen(self, *coordinate):
@@ -97,8 +163,7 @@ class MyTurtle(turtle.Turtle):
     def square(self, coordinate, length, fill_color='gray', border_color='black'):
         self.rectangle(coordinate, length, fill_color=fill_color, border_color=border_color)
 
-    def draw_char(self, coordinate, char, color, border_color='black', pixel=5):
-        x, y = coordinate
+    def draw_char(self, x, y, char, color, border_color='black', pixel=5):
         for i, row in enumerate(char.split('\n')):
             offset_y = y - i * pixel
             for j, c in enumerate(row):
@@ -107,6 +172,10 @@ class MyTurtle(turtle.Turtle):
                     pass
                 else:
                     self.square((offset_x, offset_y), pixel, color, border_color)
+
+    def write_sentence(self, x, y, sentence, color, border_color='black', pixel=5):
+        for i, char in enumerate(sentence):
+            self.draw_char(x+i*6*pixel, y, char_alphabet[char], color, border_color, pixel)
 
 
 class MineSweeper(object):
@@ -128,9 +197,7 @@ class MineSweeper(object):
                 self.turtle.square((c*l-self.col*l/2, r*l-self.row*l/2+l), l)
         self.turtle.square((-l/2, self.row*l/2+1.5*l), l, 'yellow')
 
-
-if __name__ == '__main__':
-    mt = MyTurtle()
-    mt.tracer(10000, 0.0001)
-    minesweeper = MineSweeper(t=mt)
-    turtle.done()
+mt = MyTurtle()
+mt.tracer(10000, 0.0001)
+mt.write_sentence(0, 0, 'Game over', 'black')
+turtle.mainloop()
