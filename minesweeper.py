@@ -1,145 +1,10 @@
 import random
 import turtle
+import json
 
-char_0 = '''\
- ***
-*  **
-* * *
-**  *
-*   *
- *** '''
-char_1 = '''\
-  *
- **
-  *
-  *
-  *
- *** '''
-char_2 = '''\
- ***
-*   *
-   *
-  *
- *
-*****'''
-char_3 = '''\
-*****
-    *
-  **
-    *
-*   *
- *** '''
-char_4 = '''\
-   *
-  **
- * *
-*  *
-*****
-   * '''
-char_5 = '''\
-*****
-*
-****
-    *
-*   *
- *** '''
-char_6 = '''\
- ***
-*
-****
-*   *
-*   *
- *** '''
-char_7 = '''\
-*****
-    *
-   *
-  *
-  *
-  *  '''
-char_8 = '''\
- ***
-*   *
- ***
-*   *
-*   *
- *** '''
-char_9 = '''\
- ***
-*   *
-*   *
- ****
-    *
- *** '''
-char_numbers = [char_0, char_1, char_2, char_3, char_4,
-                char_5, char_6, char_7, char_8, char_9]
-char_G = '''\
- ***
-*
-*
-*  **
-*   *
- ****'''
-char_a = '''\
+with open('char.json') as f:
+    char = json.load(f)
 
- ***
-    *
- ****
-*   *
- ****'''
-char_m = '''\
-
- * *
-* * *
-* * *
-* * *
-* * *'''
-char_e = '''\
-
- ***
-*   *
-*****
-*
- *** '''
-
-char_o = '''\
-
- ***
-*   *
-*   *
-*   *
- *** '''
-char_v = '''\
-
-*   *
-*   *
-*   *
- * *
-  *  '''
-char_r = '''\
-
-* ***
-**
-*
-*
-*    '''
-char__ = '''\
-
-
-
-
-
-     '''
-char_alphabet = {
-    'G': char_G,
-    'a': char_a,
-    'm': char_m,
-    'e': char_e,
-    'o': char_o,
-    'v': char_v,
-    'r': char_r,
-    ' ': char__,
-}
 
 class MyTurtle(turtle.Turtle):
     def setpen(self, *coordinate):
@@ -148,10 +13,10 @@ class MyTurtle(turtle.Turtle):
         self.pendown()
         self.setheading(0)
 
-    def rectangle(self, coordinate, width, height=None, fill_color='gray', border_color='black'):
+    def rectangle(self, x, y, width, height=None, fill_color='gray', border_color='black'):
         if height is None:
             height = width
-        self.setpen(coordinate)
+        self.setpen(x, y)
         self.color(border_color)
         self.fillcolor(fill_color)
         self.begin_fill()
@@ -160,22 +25,32 @@ class MyTurtle(turtle.Turtle):
             self.right(90)
         self.end_fill()
 
-    def square(self, coordinate, length, fill_color='gray', border_color='black'):
-        self.rectangle(coordinate, length, fill_color=fill_color, border_color=border_color)
+    def square(self, x, y, length, fill_color='gray', border_color='black'):
+        self.rectangle(x, y, length, fill_color=fill_color, border_color=border_color)
 
-    def draw_char(self, x, y, char, color, border_color='black', pixel=5):
+    def draw_char(self, x, y, char, color, background_color=None, pixel=5):
         for i, row in enumerate(char.split('\n')):
             offset_y = y - i * pixel
             for j, c in enumerate(row):
                 offset_x = x + j * pixel
                 if c == ' ':
-                    pass
+                    if background_color is None:
+                        continue
+                    self.square(offset_x, offset_y, pixel, background_color, background_color)
                 else:
-                    self.square((offset_x, offset_y), pixel, color, border_color)
+                    self.square(offset_x, offset_y, pixel, color, color)
 
-    def write_sentence(self, x, y, sentence, color, border_color='black', pixel=5):
-        for i, char in enumerate(sentence):
-            self.draw_char(x+i*6*pixel, y, char_alphabet[char], color, border_color, pixel)
+    def write_sentence(self, x, y, sentence, color, background_color=None, pixel=5):
+        x_pos = x
+        if background_color is not None:
+            background_height = max(map(lambda c: len(char[c].split('\n')), sentence)) * pixel
+            background_width = (sum(map(lambda c: max(map(len, char[c].split('\n'))), sentence)) + len(sentence)-1) * pixel
+            self.rectangle(x, y, background_width, background_height, background_color, background_color)
+        for i, c in enumerate(sentence):
+            char_width = max(map(len, char[c].split('\n')))
+            char_height = len(char[c].split('\n'))
+            self.draw_char(x_pos, y, char[c], color, None, pixel)
+            x_pos += (char_width + 1) * pixel
 
 
 class MineSweeper(object):
@@ -198,6 +73,6 @@ class MineSweeper(object):
         self.turtle.square((-l/2, self.row*l/2+1.5*l), l, 'yellow')
 
 mt = MyTurtle()
-mt.tracer(10000, 0.0001)
-mt.write_sentence(0, 0, 'Game over', 'black')
+turtle.tracer(10000, 0.0001)
+mt.write_sentence(-500, 0, '0123456789Game over', 'black', 'gray')
 turtle.mainloop()
