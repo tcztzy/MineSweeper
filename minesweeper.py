@@ -40,8 +40,10 @@ class MyTurtle(turtle.Turtle):
                 else:
                     self.square(offset_x, offset_y, pixel, color, color)
 
-    def write_sentence(self, x, y, sentence, color, background_color=None, pixel=5):
+    def write_sentence(self, x, y, sentence, color, background_color=None, pixel=5, break_line=300):
         x_pos = x
+        y_pos = y
+        line_height = max(map(lambda c: len(char[c].split('\n')), sentence)) * pixel
         if background_color is not None:
             background_height = max(map(lambda c: len(char[c].split('\n')), sentence)) * pixel
             background_width = (sum(map(lambda c: max(map(len, char[c].split('\n'))), sentence)) + len(sentence)-1) * pixel
@@ -49,8 +51,11 @@ class MyTurtle(turtle.Turtle):
         for i, c in enumerate(sentence):
             char_width = max(map(len, char[c].split('\n')))
             char_height = len(char[c].split('\n'))
-            self.draw_char(x_pos, y, char[c], color, None, pixel)
+            self.draw_char(x_pos, y_pos, char[c], color, None, pixel)
             x_pos += (char_width + 1) * pixel
+            if x_pos - x >= break_line:
+                y_pos -= line_height + pixel
+                x_pos = x
 
 
 class MineSweeper(object):
@@ -74,5 +79,5 @@ class MineSweeper(object):
 
 mt = MyTurtle()
 turtle.tracer(10000, 0.0001)
-mt.write_sentence(-500, 0, '0123456789Game over', 'black', 'gray')
+mt.write_sentence(-400, 0, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 'black', 'gray')
 turtle.mainloop()

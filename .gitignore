@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Visual Studio project settings
+.vs/
+MineSweeper.pyproj
+MineSweeper.sln
