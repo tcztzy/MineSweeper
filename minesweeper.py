@@ -1,12 +1,12 @@
 import random
-import turtle
+from turtle import *
 import json
 
 with open('char.json') as f:
     char = json.load(f)
 
 
-class MyTurtle(turtle.Turtle):
+class MyTurtle(Turtle):
     def setpen(self, *coordinate):
         self.penup()
         self.goto(*coordinate)
@@ -70,14 +70,24 @@ class MineSweeper(object):
             raise ValueError
         self.new_game()
 
+    def __call__(self, x, y):
+        l = self.mine_grid_length
+        grid_x = int((x+270)//60)
+        grid_y = int((y+210)//60) + 1
+        if -l/2 <= x <= l/2 and self.row*l/2+0.5*l <= y <= self.row*l/2+1.5*l:
+            self.new_game()
+
     def new_game(self):
+        print('New Game!')
         l = self.mine_grid_length
         for r in range(self.row):
             for c in range(self.col):
-                self.turtle.square((c*l-self.col*l/2, r*l-self.row*l/2+l), l)
-        self.turtle.square((-l/2, self.row*l/2+1.5*l), l, 'yellow')
+                self.turtle.square(c*l-self.col*l/2, r*l-self.row*l/2+l, l)
+        self.turtle.square(-l/2, self.row*l/2+1.5*l, l, 'yellow')
+        self.need_new_game = False
 
 mt = MyTurtle()
-turtle.tracer(10000, 0.0001)
-mt.write_sentence(-400, 0, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 'black', 'gray')
-turtle.mainloop()
+tracer(10000, 0.0001)
+game = MineSweeper(t=mt)
+onscreenclick(game)
+mainloop()
