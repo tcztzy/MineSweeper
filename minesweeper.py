@@ -59,6 +59,8 @@ class MyTurtle(Turtle):
 
 
 class MineSweeper(object):
+    need_new_game = True
+
     def __init__(self, level="primary", t=None):
         self.turtle = t
         if level == "primary":
@@ -86,8 +88,10 @@ class MineSweeper(object):
         self.turtle.square(-l/2, self.row*l/2+1.5*l, l, 'yellow')
         self.need_new_game = False
 
-mt = MyTurtle()
-tracer(10000, 0.0001)
-game = MineSweeper(t=mt)
-onscreenclick(game)
-mainloop()
+if __name__ == '__main__':
+    screen = Screen()
+    mt = MyTurtle()
+    screen.tracer(False)
+    game = MineSweeper(t=mt)
+    screen.onscreenclick(game)
+    screen.mainloop()
